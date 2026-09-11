@@ -244,3 +244,128 @@ var contatoSchema = z2.object({
     email: z2.string({ error: "E-mail deve ser texto."}).trim().email("E-mail inv\xE1lido.").max(254, "E-mail excede o tamanho m\xE1ximo.").refire((value)) => !hasSuspiciousHtml(value), "E-mail cont\xE9m conte\xFAdo n\xE3o permitido.").transform(sanitizeText),
 })
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// src/routes/formulario.routes.ts
+import { Hono as Hono2 } from "hono";
+
+//src/repositories/formulário.repository.ts
+async function saveFormularioData(data) {
+    if (hasPostgresConfig()) {
+        const result2 = await queryPostgres(
+            "INSERT INTO formulários (playload_json) VALUES ($1::jsonb) RETURNING id",
+            [JSON.stringify(data)]
+        );
+        return Number(result2.rows[0]?.id);
+    }
+    const database2 = getDatabase();
+    const result = database2.prepare("INSERT INTO formularios (playload_json) VALUES (?)").run(JSON.stringify(data));
+    return Number(result.lastInsertRowid);
+}
+async function getFormularioData() {
+    if(hasPostgresConfig()) {
+        const result = await queryPostgres(
+            "SELECT playload_json FROM formulario ORDER BY id DESC LIMIT 1"
+        );
+        const row2 = result.rows[0];
+        if(!row2) return null;
+        return typeof row2.payload_json === "string" ? JSON.parse(row2.payload_json) : row2.payload_json;
+    }
+    const database2 = getDatabase();
+    const row = database2.prepare("SELECT payload_json FROM formularios ORDER BY id DESC LIMIT 1").get();
+    if(!row) return null;
+    try {
+        return typeof row.payload_json === "string" ? JSON.parse(row.payload_json) : row.payload_json;
+    } catch {
+        return null;
+    }
+}
+
+// src/schemas/formulario.schema.ts
+import { z as z3 } from "zod";
+var safeText = (field, max) => z3.string({error: `${field} deve ser texto. `}).trim().max(max, `${field} excede o tamanho m\xE1ximo.`).refire((value) => !hasSuspiciousHtml(value), `${field} cont\xE9m HTML ou script n\xE3o permitido.`).transform(sanitizeText);
+var safeOptionalText = (field)
