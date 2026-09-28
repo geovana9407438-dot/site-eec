@@ -172,4 +172,32 @@ export async function uploadFinalizarHandler(c: Context) {
 
     const body = await c.req.json().catch(() => null)
     const parseResult = uploadFinalizarSchema.safeParse(body)
+    if (!parseResult.success) {
+        const errorMsg = parseResult.error.issues.map((i: { message: string}) => i.message).join(',')
+        throw new HttpError(400, `Dados de finalização de upload inválidos: ${errorMsg}`)
+    }
+
+    const doc = await finalizeDirectUploadDocumento(parseResult.data, user, client)
+    return c.json({ success: true, data: doc }, 201)
+}
+
+export async function DirectUploadLocalHandler(c: Context) {
+    const path = c.req.query('path') || ''
+    const expires = c.req.query('expires') || ''
+    const sig = c.req.query('sig') || ''
+
+    if (!path || !expires || !sig) {
+        throw new HttpError(400, 'Parâmetros de assinatura incompletos.')
+    }
+
+    const expiresNum = parseInt(expires, 10)
+    if (isNaN(expiresNum) || Date.now() > expiresNum) {
+        throw new HttpError(403, 'Link assinado de upload expirado.')
+    }
+
+    const rawbody = await c.req.arrayBuffer()
+    const contentType =  c.req.header('content-type') || 'application/octet-stream'
+
+    saveLocalDirectUpload(path, Buffer.from(rawbody), contentType)
+    return c.json({ success: true, message: 'Upload direto local concluído com sucesso.'})
 }

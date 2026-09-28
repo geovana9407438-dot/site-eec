@@ -11,7 +11,7 @@ export async function postLogin(c: Context) { // cria a exporta a função respo
         const email = body?.email?.trim() || ''   
         const password = body?.password ||  ''
 
-        const { use } = await authenticateWithPassword(c, email, password)
+        const { user } = await authenticateWithPassword(c, email, password)
 
         // A sessão é estabelecida por cookies HttpOnly seguros gerenciados pelo servidor.
         // Nenhum token de acesso é exposto no corpo do payload JSON.
