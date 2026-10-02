@@ -35,10 +35,24 @@ export function requireRole(...allowedRoles: Role[]) { /**Crie uma proteção qu
                     <title>403 - Acesso Negado | Central EEC</title>
                     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
                     <link rel="stylesheet" href="${assertUrl('/styles/tailwind.css')}">
+                    <link rel="stylesheet" href="${assertUrl('/static/styles.css')}">
                 </head>
                 <body class="font-poppins bg-gray-100 flex items-center justify-center min-h-screen p-4">
-                    <div class="max-w-md w-full bg 
-            `)
+                    <div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center">
+                        <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                            !
+                        </div>
+                        <h1 class="text-2xl font-bold text-gray-800 mb-2">403 - Acesso Negado</h1>
+                        <p class="text-gray-600 mb-6 text-sm">Seu perfil atual (<strong>${role}</strong>) não possui autorização para acessar este recurso.</p>
+                        <a href="/admin" class="incline-block px-6 py-2.5 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all text-sm">
+                            Voltar ao Painel 
+                        </a>
+                    </div>
+                </body>
+                </html>
+            `, 403)
         }
+
+        return c.json({ error: 'Acesso negado para este perfil.'}, 403)
     }
 }
