@@ -33,7 +33,7 @@ const CSRF_EXEMPT_PATHS = new Set(['/api/contato', '/api/auth/recuperar-senha'])
  * passa por `https://localhost:3130`. A fonte de verdade é `ALLOWED_ORIGINS`,
  * mais a origem da pópria requisição - não existe segunda lista.
  */
-function origemConfidencial(origem: string, proprioOrigin: string, permitidas: string[]): boolean {
+function origemConfiavel(origem: string, proprioOrigin: string, permitidas: string[]): boolean {
     let normalizada: string
     try {
         normalizada = new URL(origem).origem 
